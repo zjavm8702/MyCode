@@ -4,18 +4,27 @@ using UnityEngine.UI;
 
 public class ExtensionComponentConvertTool 
 {
-    [MenuItem("Assets/HM/Extension Component Convert", false, int.MinValue)]
+     [MenuItem("GameObject/Tool/Text in Prefab->ExtensionText", false)]
     private static void AssetsConvert()
     {
         ConvertAssets(Selection.objects);
     }
 
-    [MenuItem("GameObject/ExtensionText Convert", false, int.MinValue)]
+    [MenuItem("GameObject/Tool/Text->ExtensionText ", false)]
     private static void GameObjectConvert()
     {
         ConvertGameObject(Selection.activeObject);
     }
 
+    [MenuItem("GameObject/Tool/Text in Scene->ExtensionText", false)]
+    private static void ConvertScene()
+    {
+        var scene = SceneManager.GetActiveScene();
+        var sceneAllObj = scene.GetRootGameObjects();
+
+        ConvertAssets(sceneAllObj);
+    }
+        
     private static void ConvertGameObject(Object findTarget)
     {
         if (findTarget is GameObject == false)
@@ -63,25 +72,6 @@ public class ExtensionComponentConvertTool
             }
 
             ConvertComponent<Text, ExtensionText>(selectObjects[i]);
-            //ConvertComponent<Image, HMExtensionImage>(selectObjects[i]);
-        }
-
-        AssetDatabase.Refresh();
-    }
-
-    [MenuItem("Assets/HM/Revert Image", false, int.MinValue)]
-    private static void RevertImage()
-    {
-        var selectObjects = Selection.objects;
-
-        for (int i = 0; i < selectObjects.Length; i++)
-        {
-            if (selectObjects[i] is GameObject == false)
-            {
-                continue;
-            }
-
-            //ConvertComponent<HMExtensionImage, Image>(selectObjects[i], false);
         }
 
         AssetDatabase.Refresh();
@@ -91,10 +81,10 @@ public class ExtensionComponentConvertTool
         where TOld : Component
         where TNew : Component
     {
-        
-        var selectObjectPath    = AssetDatabase.GetAssetPath(obj);
-        var selectPrefab        = PrefabUtility.LoadPrefabContents(selectObjectPath);
-        var oldComponents       = selectPrefab.GetComponentsInChildren<TOld>(true);
+
+        var selectObjectPath = AssetDatabase.GetAssetPath(obj);
+        var selectPrefab = PrefabUtility.LoadPrefabContents(selectObjectPath);
+        var oldComponents = selectPrefab.GetComponentsInChildren<TOld>(true);
 
         for (int i = 0; i < oldComponents.Length; i++)
         {
@@ -103,14 +93,14 @@ public class ExtensionComponentConvertTool
                 continue;
             }
 
-            var parentOb        = oldComponents[i].gameObject;
+            var parentOb = oldComponents[i].gameObject;
             var oldSerializedOb = new SerializedObject(oldComponents[i]);
-            
+
             Object.DestroyImmediate(parentOb.GetComponent<TOld>());
-            
-            var convertText     = parentOb.AddComponent<TNew>();
+
+            var convertText = parentOb.AddComponent<TNew>();
             var newSerializedOb = new SerializedObject(convertText);
-            var iter            = oldSerializedOb.GetIterator();
+            var iter = oldSerializedOb.GetIterator();
 
             while (iter.NextVisible(true))
             {
