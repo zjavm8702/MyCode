@@ -1,8 +1,8 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(HMExtensionText))]
-public class HMExtensionTextEditor : UnityEditor.UI.TextEditor
+[CustomEditor(typeof(ExtensionText))]
+public class ExtensionTextEditor : UnityEditor.UI.TextEditor
 {
     private SerializedProperty StringKeyProperty = null;
     private SerializedProperty StringCodeProperty = null;
